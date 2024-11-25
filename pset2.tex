@@ -1,0 +1,462 @@
+\documentclass[answers]{exam}
+\makeindex
+
+\usepackage{amsmath, amsfonts, amssymb, amstext, amscd, amsthm, makeidx, graphicx, hyperref, url, enumerate, mathtools, listings}
+\usepackage{lmodern}
+
+\newtheorem{theorem}{Theorem}
+\allowdisplaybreaks
+
+\begin{document}
+
+\begin{center}
+{\Large CS 156 Learning Systems: Problem Set 2} \\
+\medskip
+Marco Yang \\
+\medskip
+2237027
+\bigskip
+\end{center}
+
+\section*{Hoeffding Inequality}
+
+Run a computer simulation for flipping 1,000 virtual fair coins. Flip each coin 
+independently 10 times. Focus on 3 coins as follows: $c_1$ is the first coin flipped, 
+$c_{\text{rand}}$ is a coin chosen randomly from the 1,000, and $c_{\text{min}}$ 
+is the coin which had the minimum frequency of heads (pick the earlier one in case 
+of a tie). Let $\nu_1$, $\nu_{\text{rand}}$, and $\nu_{\text{min}}$ be the fraction 
+of heads obtained for the 3 respective coins out of the 10 tosses.
+Run the experiment 100,000 times in order to get a full distribution of $\nu_1$, 
+$\nu_{\text{rand}}$, and $\nu_{\text{min}}$ (note that $c_{\text{rand}}$ and 
+$c_{\text{min}}$ will change from run to run).
+
+\begin{questions}
+
+\question The average value of $\nu_{\text{min}}$ is closest to:
+\begin{choices}
+    \choice 0
+    \choice 0.01
+    \choice 0.1
+    \choice 0.5
+    \choice 0.67
+\end{choices}
+
+\begin{solution}
+    D. 0.5
+\end{solution}
+
+\question Which coin(s) has a distribution of $\nu$ that satisfies the (single-bin) 
+Hoeffding Inequality?
+\begin{choices}
+    \choice $c_1$ only
+    \choice $c_{\text{rand}}$ only
+    \choice $c_{\text{min}}$ only
+    \choice $c_1$ and $c_{\text{rand}}$
+    \choice $c_{\text{min}}$ and $c_{\text{rand}}$
+\end{choices}
+
+\begin{solution}
+    D. $c_1$ and $c_{rand}$.
+\end{solution}
+
+\end{questions}
+
+\section*{Error and Noise}
+
+Consider the bin model for a hypothesis $h$ that makes an error with probability 
+$\mu$ in approximating a deterministic target function $f$ (both $h$ and $f$ are 
+binary-valued functions). If we use the same $h$ to approximate a noisy version of 
+$f$ given by:
+
+\[
+P(y \mid x) = 
+\begin{cases} 
+    \lambda & \text{if } y = f(x), \\
+    1 - \lambda & \text{if } y \neq f(x)
+\end{cases}
+\]
+
+\begin{questions}
+\setcounter{question}{2}
+
+\question What is the probability of error that $h$ makes in approximating $y$? 
+(Hint: Two wrongs can make a right!)
+\begin{choices}
+    \choice $\mu$
+    \choice $\lambda$
+    \choice $1 - \mu$
+    \choice $(1 - \lambda) \cdot \mu + \lambda \cdot (1 - \mu)$
+    \choice $(1 - \lambda) \cdot (1 - \mu) + \lambda \cdot \mu$
+\end{choices}
+
+\begin{solution}
+    There are two ways that $h$ approximates $y$ wrongly: $h$ gets it right
+    and there is noise, or $h$ gets it wrong and there is no noise. Thus,
+    the correct answer is E. $(1 - \lambda) \cdot (1 - \mu) + \lambda \cdot \mu$
+\end{solution}
+
+\question At what value of $\lambda$ will the performance of $h$ be independent of 
+$\mu$?
+\begin{choices}
+    \choice 0
+    \choice 0.5
+    \choice $1/\sqrt{2}$
+    \choice 1
+    \choice No values of $\lambda$
+\end{choices}
+
+\begin{solution}
+    B. 0.5
+    
+    If the performance of $h$ is independent of $\mu$, then that means the 
+    probability of error that $h$ makes is independent of $\mu$. Using our 
+    answer from the previous question, the probability of error is
+
+    \[
+        (1 - \lambda) \cdot (1 - \mu) + \lambda \cdot \mu = 1 - \lambda - \mu + 2\lambda\mu 
+    .\] 
+
+    Thus, if $\lambda=0.5$, the error would be
+
+    \[
+    1 - 0.5 - \mu + \mu = 0.5
+    .\] 
+\end{solution}
+
+\end{questions}
+
+\section*{Linear Regression}
+
+In these problems, we will explore how Linear Regression for classification works. 
+As with the Perceptron Learning Algorithm in Homework \#1, you will create your 
+own target function $f$ and data set $D$. Take $d = 2$ so you can visualize the 
+problem, and assume $X = [-1, 1] \times [-1, 1]$ with uniform probability of 
+picking each $x \in X$. In each run, choose a random line in the plane as your 
+target function $f$ (do this by taking two random, uniformly distributed points in 
+$[-1, 1] \times [-1, 1]$ and taking the line passing through them), where one side 
+of the line maps to $+1$ and the other maps to $-1$. Choose the inputs $x_n$ of 
+the data set as random points (uniformly in $X$), and evaluate the target function 
+on each $x_n$ to get the corresponding output $y_n$.
+
+\begin{questions}
+\setcounter{question}{4}
+
+\question Take $N = 100$. Use Linear Regression to find $g$ and evaluate 
+$E_{\text{in}}$, the fraction of in-sample points classified incorrectly. Repeat 
+the experiment 1000 times and take the average (keep the $f$'s and $g$'s as they 
+will be used again in Problem 6). Which of the following values is closest to the 
+average $E_{\text{in}}$?
+\begin{choices}
+    \choice 0
+    \choice 0.001
+    \choice 0.01
+    \choice 0.1
+    \choice 0.5
+\end{choices}
+
+\begin{solution}
+    C. 0.01
+\end{solution}
+
+\question Now, generate 1000 fresh points and use them to estimate $E_{\text{out}}$ 
+using the $g$ that you got in Problem 5. Which value is closest to the average of 
+$E_{\text{out}}$ over the 1000 runs of the experiment?
+\begin{choices}
+    \choice 0
+    \choice 0.001
+    \choice 0.01
+    \choice 0.1
+    \choice 0.5
+\end{choices}
+
+\begin{solution}
+    C. 0.01
+\end{solution}
+
+\question Now, take $N = 10$. After finding the weights using Linear Regression, 
+use them as a vector of initial weights for the Perceptron Learning Algorithm. 
+Run PLA until it converges to a final vector of weights that completely separates 
+all the in-sample points. Among the choices below, what is the closest value to 
+the average number of iterations (over 1000 runs) that PLA takes to converge?
+\begin{choices}
+    \choice 1
+    \choice 15
+    \choice 300
+    \choice 5000
+    \choice 10000
+\end{choices}
+
+\begin{solution}
+    
+\end{solution}
+    B. 15
+\end{questions}
+
+\section*{Nonlinear Transformation}
+
+In these problems, we again apply Linear Regression for classification. Consider 
+the target function:
+\[
+f(x_1, x_2) = \text{sign}(x_1^2 + x_2^2 - 0.6)
+\]
+Generate a training set of $N = 1000$ points on $X = [-1, 1] \times [-1, 1]$ with 
+a uniform probability of picking each $x \in X$. Generate simulated noise by 
+flipping the sign of the output in a randomly selected 10\% subset of the generated 
+training set.
+
+\begin{questions}
+\setcounter{question}{7}
+
+\question Carry out Linear Regression without transformation, i.e., with feature 
+vector $(1, x_1, x_2)$, to find the weight $w$. What is the closest value to the 
+classification in-sample error $E_{\text{in}}$? (Run the experiment 1000 times and 
+take the average $E_{\text{in}}$ to reduce variation in your results.)
+\begin{choices}
+    \choice 0
+    \choice 0.1
+    \choice 0.3
+    \choice 0.5
+    \choice 0.8
+\end{choices}
+
+\begin{solution}
+    D. 0.5
+\end{solution}
+
+\question Now, transform the $N = 1000$ training data into the following nonlinear 
+feature vector: 
+
+\[
+(1, x_1, x_2, x_1 x_2, x_1^2, x_2^2)
+.\] 
+
+Find the vector $\tilde{w}$ that corresponds to the solution of Linear Regression. 
+Which of the following hypotheses is closest to the one you find?
+\begin{choices}
+    \choice $g(x_1, x_2) = \text{sign}(-1 - 0.05x_1 + 0.08x_2 + 0.13x_1 x_2 + 
+    1.5x_1^2 + 1.5x_2^2)$
+    \choice $g(x_1, x_2) = \text{sign}(-1 - 0.05x_1 + 0.08x_2 + 0.13x_1 x_2 + 
+    1.5x_1^2 + 15x_2^2)$
+    \choice $g(x_1, x_2) = \text{sign}(-1 - 0.05x_1 + 0.08x_2 + 0.13x_1 x_2 + 
+    15x_1^2 + 1.5x_2^2)$
+    \choice $g(x_1, x_2) = \text{sign}(-1 - 1.5x_1 + 0.08x_2 + 0.13x_1 x_2 + 
+    0.05x_1^2 + 0.05x_2^2)$
+    \choice $g(x_1, x_2) = \text{sign}(-1 - 0.05x_1 + 0.08x_2 + 1.5x_1 x_2 + 
+    0.15x_1^2 + 0.15x_2^2)$
+\end{choices}
+
+\begin{solution}
+    A. $g(x_1, x_2) = \text{sign}(-1 - 0.05x_1 + 0.08x_2 + 0.13x_1 x_2 + 
+    1.5x_1^2 + 1.5x_2^2)$
+\end{solution}
+
+\question What is the closest value to the classification out-of-sample error 
+$E_{\text{out}}$ of your hypothesis from Problem 9? (Estimate it by generating 
+a new set of 1000 points and adding noise, as before. Average over 1000 runs to 
+reduce variation in your results.)
+\begin{choices}
+    \choice 0
+    \choice 0.1
+    \choice 0.3
+    \choice 0.5
+    \choice 0.8
+\end{choices}
+
+\begin{solution}
+    B. 0.1
+\end{solution}
+
+\end{questions}
+
+\section*{Code}
+
+\begin{verbatim}
+import numpy as np
+import random
+
+class LinReg():
+    def __init__(self, dim) -> None:
+        self.dim = dim
+        self.w = np.array(dim + 1)
+
+    def predict(self, x):
+        n = x.shape[0]
+        X = np.concatenate((np.ones((n, 1)), x), axis=1)
+        raw_preds = X @ self.w
+        return np.vectorize(sign)(raw_preds)
+
+    def train(self, x, y):
+        n = x.shape[0]
+        X = np.concatenate((np.ones((n, 1)), x), axis=1)
+        p_inv = np.linalg.inv(X.T @ X) @ X.T
+        self.w = p_inv @ y
+
+    def eval(self, x, y):
+        preds = self.predict(x)
+        return np.sum(preds == y) / y.shape[0]
+
+
+def sign(x):
+    if x < 0:
+        return -1
+    if x > 0:
+        return 1
+    return 0
+
+
+def rand_point():
+    return np.random.uniform(-1, 1, 2)
+
+
+def generate_line():
+    p1 = rand_point()
+    p2 = rand_point()
+    m = (p2[1] - p1[1]) / (p2[0] - p1[0])
+    b = p1[1] - m * p1[0]
+    f = lambda x:  m * x + b
+    return f
+
+
+def generate_data(n, f=None):
+    if f is None:
+        line = generate_line()
+        f = lambda x: sign(x[1] - line(x[0]))
+    x = np.random.uniform(-1, 1, (n, 2))
+    y = np.array([f(xi) for xi in x]).reshape((n, 1))
+
+    return x, y
+
+
+def p5p6():
+    num_trials = 1000
+    num_points = 100
+    train_errors = []
+    test_errors = []
+
+    for _ in range(num_trials):
+        line = generate_line()
+        f = lambda x: sign(x[1] - line(x[0]))
+        x, y = generate_data(num_points, f)
+        model = LinReg(2)
+        model.train(x, y)
+
+        # evaluate training data
+        acc = model.eval(x, y)
+        train_errors.append(1 - acc)
+
+        # evaluate fresh test data
+        x_test, y_test = generate_data(num_points, f)
+        acc = model.eval(x_test, y_test)
+        test_errors.append(1 - acc)
+
+    print(f"5. Average Error for Training Data: {sum(train_errors) / len(train_errors)}")
+    print(f"6. Average Error for Test Data: {sum(test_errors) / len(test_errors)}")
+
+
+def p7():
+    from pla import PLA
+    num_points = 10
+    num_trials = 1000
+
+    iters_arr = []
+    for _ in range(num_trials):
+        x, y = generate_data(num_points)
+
+        lr_model = LinReg(2)
+        lr_model.train(x, y)
+
+        pla_model = PLA(weights=lr_model.w)
+        iters = pla_model.train(x, y)
+        iters_arr.append(iters)
+
+    print(f"7. Average iterations: {sum(iters_arr) / len(iters_arr)}")
+
+
+def noise(y, prob):
+    n = y.shape[0]
+    idxs = [i for i in range(n)]
+    noised = random.sample(idxs, int(prob * n))
+    for i in noised:
+        y[i] *= -1
+
+
+def p8():
+    num_trials = 1000
+    num_points = 1000
+    train_errors = []
+
+    for _ in range(num_trials):
+        f = lambda x: sign(x[0] * x[0] + x[1] * x[1] - 0.6)
+        x, y = generate_data(num_points, f)
+        noise(y, 0.1)
+        model = LinReg(2)
+        model.train(x, y)
+
+        # evaluate training data
+        acc = model.eval(x, y)
+        train_errors.append(1 - acc)
+
+    print(f"8. Average Error for Training Data: {sum(train_errors) / len(train_errors)}")
+
+
+def binom_transform(x):
+    x1x2 = lambda x: (x[:, 0] * x[:, 1]).reshape(x.shape[0], 1)
+    x1sq = lambda x: (x[:, 0] * x[:, 0]).reshape(x.shape[0], 1)
+    x2sq = lambda x: (x[:, 1] * x[:, 1]).reshape(x.shape[0], 1)
+    return np.concat((x, x1x2(x), x1sq(x), x2sq(x)), axis=1)
+
+
+def p9():
+    num_points = 1000
+    f = lambda x: sign(x[0] * x[0] + x[1] * x[1] - 0.6)
+
+    x, y = generate_data(num_points, f)
+    x = binom_transform(x)
+    noise(y, 0.1)
+
+    model = LinReg(5)
+    model.train(x, y)
+    print(f"9. Weights: {model.w.flatten()}")
+
+
+def p10():
+    num_points = 1000
+    num_trials = 1000
+
+    errors = []
+
+    for _ in range(num_trials):
+        f = lambda x: sign(x[0] * x[0] + x[1] * x[1] - 0.6)
+
+        x, y = generate_data(num_points, f)
+        x = binom_transform(x)
+        noise(y, 0.1)
+
+        model = LinReg(5)
+        model.train(x, y)
+
+        # evaluate training data
+        x_test, y_test = generate_data(num_points, f)
+        x_test = binom_transform(x_test)
+        noise(y_test, 0.1)
+        acc = model.eval(x_test, y_test)
+        errors.append(1 - acc)
+
+    print(f"10. Average test error: {sum(errors) / len(errors)}")
+
+
+if __name__ == '__main__':
+    p5p6()
+    p7()
+    p8()
+    p9()
+
+    # 5. Average Error for Training Data: 0.03971000000000007
+    # 6. Average Error for Test Data: 0.048690000000000115
+    # 7. Average iterations: 5.132
+    # 8. Average Error for Training Data: 0.5051409999999995
+    # 9. Weights: [-0.97144929 -0.07195109  0.0206307  -0.01869121  1.50456059  1.57306042]
+    # 10. Average test error: 0.12600099999999997   p10()
+\end{verbatim}
+
+\end{document}

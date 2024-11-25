@@ -1,0 +1,256 @@
+\documentclass[answers]{exam}
+\makeindex
+
+\usepackage{amsmath, amsfonts, amssymb, amstext, amscd, amsthm, makeidx, graphicx, hyperref, url, enumerate}
+\newtheorem{theorem}{Theorem}
+\usepackage{listings}
+\usepackage{lmodern}
+\usepackage{sourcecodepro}
+\usepackage[T1]{fontenc}
+\lstset{basicstyle=\ttfamily}
+\allowdisplaybreaks
+
+\begin{document}
+
+\begin{center}
+{\Large CS 156 - Problem Set 6} \\
+\medskip
+Marco Yang \\
+\medskip
+2237027
+\bigskip
+\end{center}
+
+\section*{Overfitting and Deterministic Noise}
+
+\begin{questions}
+\question Deterministic noise depends on $\mathcal{H}$, as some models 
+approximate $f$ better than others. Assume that $\mathcal{H}' \subset 
+\mathcal{H}$ and that $f$ is fixed. In general, if we use $\mathcal{H}'$ instead 
+of $\mathcal{H}$, how does deterministic noise behave?
+
+\begin{choices}
+\choice In general, deterministic noise will decrease.
+\choice In general, deterministic noise will increase.
+\choice In general, deterministic noise will be the same.
+\choice There is deterministic noise for only one of $\mathcal{H}$ and 
+$\mathcal{H}'$.
+\end{choices}
+
+\begin{solution}
+B. Deterministic noise will increase since $\mathcal{H}$ is now less robust
+can't learn as much about $f$ as it did before.
+\end{solution}
+\end{questions}
+
+\section*{Regularization with Weight Decay}
+
+\textbf{Background:} Use the data from 
+\url{http://work.caltech.edu/data/in.dta} and 
+\url{http://work.caltech.edu/data/out.dta} as training and test sets. 
+Each line corresponds to a two-dimensional input $x = (x_1, x_2)$, with 
+label from $Y = \{-1, 1\}$. Apply Linear Regression with a non-linear 
+transformation:
+\[
+\Phi(x_1, x_2) = (1, x_1, x_2, x_1^2, x_2^2, x_1 x_2, |x_1 - x_2|, |x_1 + x_2|)
+\]
+The classification error is the fraction of misclassified points.
+
+\lstinputlisting[
+    language=Python, 
+    title=\texttt{data2d.py}, 
+    basicstyle=\small\ttfamily
+]{code/data2d.py}
+\lstinputlisting[
+    language=Python, 
+    title=\texttt{linreg.py}, 
+    basicstyle=\small\ttfamily
+]{code/linreg.py}
+\lstinputlisting[
+    language=Python, 
+    title=\texttt{linregtrans.py}, 
+    basicstyle=\small\ttfamily
+]{code/linregtrans.py}
+\lstinputlisting[
+    language=Python, 
+    title=\texttt{weightdecay.py}, 
+    basicstyle=\small\ttfamily
+]{code/weightdecay.py}
+\lstinputlisting[
+    language=Python, 
+    title=\texttt{pset6.py}, 
+    basicstyle=\small\ttfamily
+]{code/pset6.py}
+
+\begin{questions}
+\setcounter{question}{1}
+\question Run Linear Regression on the training set with the transformation. 
+What values are closest to the in-sample and out-of-sample errors?
+\begin{choices}
+\choice 0.03, 0.08
+\choice 0.03, 0.10
+\choice 0.04, 0.09
+\choice 0.04, 0.11
+\choice 0.05, 0.10
+\end{choices}
+
+\begin{verbatim*}
+\end{verbatim*}
+
+\begin{solution}
+A. 0.03, 0.08
+\end{solution}
+
+\question Now add weight decay to Linear Regression with $\lambda = 10^k$ 
+and $k = -3$. What values are closest to the in-sample and out-of-sample 
+classification errors?
+\begin{choices}
+\choice 0.01, 0.02
+\choice 0.02, 0.04
+\choice 0.02, 0.06
+\choice 0.03, 0.08
+\choice 0.03, 0.10
+\end{choices}
+
+\begin{solution}
+D. 0.03, 0.08
+\end{solution}
+
+\question Use $k = 3$. What are the new in-sample and out-of-sample 
+classification errors?
+\begin{choices}
+\choice 0.2, 0.2
+\choice 0.2, 0.3
+\choice 0.3, 0.3
+\choice 0.3, 0.4
+\choice 0.4, 0.4
+\end{choices}
+
+\begin{solution}
+E. 0.4, 0.4
+\end{solution}
+
+\question What value of $k$ achieves the smallest out-of-sample error?
+\begin{choices}
+\choice 2
+\choice 1
+\choice 0
+\choice -1
+\choice -2
+\end{choices}
+
+\begin{solution}
+D. -1
+\end{solution}
+
+\question What is the closest minimum out-of-sample error achieved by 
+varying $k$?
+\begin{choices}
+\choice 0.04
+\choice 0.06
+\choice 0.08
+\choice 0.10
+\choice 0.12
+\end{choices}
+
+\begin{solution}
+B. 0.06
+\end{solution}
+\end{questions}
+
+\section*{Regularization for Polynomials}
+
+Polynomial models can be viewed as linear models in a space $\mathcal{Z}$, 
+with a nonlinear transform $\Phi : \mathcal{X} \to \mathcal{Z}$ using 
+Legendre polynomials.
+
+\begin{questions}
+\setcounter{question}{6}
+\question Consider $\mathcal{H}(Q, C, Q_0) = \{h | h(x) = \textbf{w}^T\textbf{z} 
+\in \mathcal{H}_Q; w_q = C \text{ for } q \geq Q_0\}$. Which statement is correct?
+\begin{choices}
+\choice $\mathcal{H}(10, 0, 3) \cup \mathcal{H}(10, 0, 4) = \mathcal{H}_4$
+\choice $\mathcal{H}(10, 1, 3) \cup \mathcal{H}(10, 1, 4) = \mathcal{H}_3$
+\choice $\mathcal{H}(10, 0, 3) \cap \mathcal{H}(10, 0, 4) = \mathcal{H}_2$
+\choice $\mathcal{H}(10, 1, 3) \cap \mathcal{H}(10, 1, 4) = \mathcal{H}_1$
+\choice None of the above
+\end{choices}
+
+\begin{solution}
+C. $\mathcal{H}(10, 0, 3) \cap \mathcal{H}(10, 0, 4) = \mathcal{H}_2$
+
+The second set includes all of the terms in the first set, and the first
+set is equivalent to the set of all linear combinations of the first, second
+and third Legendre polynomials ($L_0, L_1, L_2$), which is just $\mathcal{H}_{2}$.
+\end{solution}
+\end{questions}
+
+\section*{Neural Networks}
+
+\begin{questions}
+\setcounter{question}{7}
+\question A fully connected Neural Network has $L = 2; d^{(0)} = 5, d^{(1)}
+= 3, d^{(2)} = 1$. If only products of the form $w_{ij}^{(l)}x_{i}^{(l-1)}, 
+w_{ij}^{(l)}\delta_{j}^{(l)},$ and $x_{i}^{(l-1)}\delta^{(l)}$ count as 
+operations (even for $x_0^{(l-1)} = 1$), without counting anything else, 
+which of the following the closest to the total number of operations in 
+one iteration of backpropagation?
+\begin{choices}
+\choice 30
+\choice 35
+\choice 40
+\choice 45
+\choice 50
+\end{choices}
+
+\begin{solution}
+C. 40.
+
+Since there are $5 \cdot 2 + 3 = 13$ operations in the feed forward and
+$2(5 \cdot 2 + 3) = 26$ operations in the backwards derivation, there are
+39 total operations.
+\end{solution}
+\end{questions}
+
+Let us call every node in a NN a unit, including added constant values. Consider
+a NN with 10 input units (9 values and a constant), one output unit, and 36
+hidden units (each $x_0^{(l)}$ is a unit). The units can be arranged in any 
+number of layers
+
+\begin{questions}
+\setcounter{question}{8}
+\question A Neural Network has 10 input units, one output unit, and 36 hidden 
+units. What is the minimum possible number of weights?
+\begin{choices}
+\choice 46
+\choice 47
+\choice 56
+\choice 57
+\choice 58
+\end{choices}
+
+\begin{solution}
+A. 46
+
+If we have 2 units in each of the 18 hidden layers, then we have $10 \cdot 1 + 2 \cdot 18$
+total units.
+\end{solution}
+
+\question What is the maximum possible number of weights in this network?
+\begin{choices}
+\choice 386
+\choice 493
+\choice 494
+\choice 509
+\choice 510
+\end{choices}
+
+\begin{solution}
+E. 510
+
+If there are 22 units in the first layer and 14 in the second hidden layer, 
+then there would be $10 \cdot 22 + 21 \cdot 13 + 14 = 510$ units.
+\end{solution}
+\end{questions}
+
+\end{document}

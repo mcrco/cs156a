@@ -1,0 +1,223 @@
+\documentclass[answers]{exam}
+\makeindex
+
+\usepackage{amsmath, amsfonts, amssymb, amstext, amscd, amsthm, makeidx, graphicx, hyperref, url, enumerate}
+\usepackage{listings}
+\usepackage{lmodern}
+\usepackage{sourcecodepro}
+\usepackage[T1]{fontenc}
+\lstset{basicstyle=\ttfamily}
+\newtheorem{theorem}{Theorem}
+\allowdisplaybreaks
+
+\begin{document}
+
+\begin{center}
+{\Large CS 156a - Problem Set 8} \\
+\medskip
+Marco Yang \\
+\medskip
+2237027
+\bigskip
+\end{center}
+
+\begin{questions}
+\question Recall that \(N\) is the size of the data set and \(d\) is the 
+dimensionality of the input space. The original formulation of the hard-margin 
+SVM problem (minimize \(\frac{1}{2}w^T w\) subject to the inequality 
+constraints), without going through the Lagrangian dual problem, is:
+\begin{parts}
+\part a quadratic programming problem with \(N\) variables
+\part a quadratic programming problem with \(N + 1\) variables
+\part a quadratic programming problem with \(d\) variables
+\part a quadratic programming problem with \(d + 1\) variables
+\part not a quadratic programming problem
+\end{parts}
+
+\begin{solution}
+d. a quadratic programming problem with \(d+1\) variables
+
+$w$ is dimension $d$, the same as input space, and then +1 for the bias. 
+\end{solution}
+\end{questions}
+
+\section*{SVM with Soft Margins}
+
+Implement SVM with soft margin on the zip-code data set by solving:
+\[
+\min_\alpha \frac{1}{2} \sum_{n=1}^N \sum_{m=1}^N 
+\alpha_n \alpha_m y_n y_m K(x_n, x_m) - \sum_{n=1}^N \alpha_n
+\]
+subject to:
+\[
+\sum_{n=1}^N y_n \alpha_n = 0, \quad 0 \leq \alpha_n \leq C, \, n = 1, \dots, N
+\]
+Evaluate \(E_{\text{in}}\) and \(E_{\text{out}}\) of the resulting classifier using 
+binary classification error.
+
+\begin{questions}
+\setcounter{question}{1}
+\question With \(C = 0.01\) and \(Q = 2\), which classifier has the highest 
+\(E_{\text{in}}\)?
+\begin{parts}
+\part 0 versus all
+\part 2 versus all
+\part 4 versus all
+\part 6 versus all
+\part 8 versus all
+\end{parts}
+
+\begin{solution}
+a. 0 versus all
+\end{solution}
+
+\question With \(C = 0.01\) and \(Q = 2\), which classifier has the lowest 
+\(E_{\text{in}}\)?
+\begin{parts}
+\part 1 versus all
+\part 3 versus all
+\part 5 versus all
+\part 7 versus all
+\part 9 versus all
+\end{parts}
+
+\begin{solution}
+a. 1 versus all
+\end{solution}
+
+\question Compare the classifiers from the previous two questions. What is the 
+closest value to the difference between the number of support vectors?
+\begin{parts}
+\part 600
+\part 1200
+\part 1800
+\part 2400
+\part 3000
+\end{parts}
+
+\begin{solution}
+c. 1800
+\end{solution}
+\end{questions}
+
+\section*{Polynomial Kernels}
+
+\begin{questions}
+\setcounter{question}{4}
+\question Consider the 1 versus 5 classifier with \(Q = 2\) and 
+\(C \in \{0.001, 0.01, 0.1, 1\}\). Which statement is correct?
+\begin{parts}
+\part The number of support vectors decreases as \(C\) increases.
+\part The number of support vectors increases as \(C\) increases.
+\part \(E_{\text{out}}\) decreases as \(C\) increases.
+\part Maximum \(C\) achieves the lowest \(E_{\text{in}}\).
+\part None of the above.
+\end{parts}
+
+\begin{solution}
+d. Maximum \(C\) achieves the lowest \(E_{\text{in}}\).
+\end{solution}
+
+\question Comparing \(Q = 2\) and \(Q = 5\), which is correct?
+\begin{parts}
+\part For \(C = 0.0001\), \(E_{\text{in}}\) is higher at \(Q = 5\).
+\part For \(C = 0.001\), fewer support vectors exist at \(Q = 5\).
+\part For \(C = 0.01\), \(E_{\text{in}}\) is higher at \(Q = 5\).
+\part For \(C = 1\), \(E_{\text{out}}\) is lower at \(Q = 5\).
+\part None of the above.
+\end{parts}
+
+\begin{solution}
+b. For \(C = 0.001\), fewer support vectors exist at \(Q = 5\).
+\end{solution}
+\end{questions}
+
+\section*{Cross Validation}
+
+\begin{questions}
+\setcounter{question}{6}
+\question Using 10-fold cross validation for the 1 versus 5 classifier with 
+\(Q = 2\), \(C \in \{0.0001, 0.001, 0.01, 0.1, 1\}\), which statement is correct?
+\begin{parts}
+\part \(C = 0.0001\) is selected most often.
+\part \(C = 0.001\) is selected most often.
+\part \(C = 0.01\) is selected most often.
+\part \(C = 0.1\) is selected most often.
+\part \(C = 1\) is selected most often.
+\end{parts}
+
+\begin{solution}
+b. \(C = 0.001\) is selected most often.
+\end{solution}
+
+\question For the winning selection in the previous question, the average 
+\(E_{\text{cv}}\) value over 100 runs is closest to:
+\begin{parts}
+\part 0.001
+\part 0.003
+\part 0.005
+\part 0.007
+\part 0.009
+\end{parts}
+
+\begin{solution}
+c. 0.005
+\end{solution}
+\end{questions}
+
+\section*{RBF Kernel}
+
+Consider the RBF kernel $K(x_n, x_m) = \exp(-||x_n - x_m||^2)$ in the soft
+margin SVM approach. Focus on the 1 vs 5 classifier.
+
+\begin{questions}
+\setcounter{question}{8}
+\question Which value of \(C\) results in the lowest \(E_{\text{in}}\)?
+\begin{parts}
+\part \(C = 0.01\)
+\part \(C = 1\)
+\part \(C = 100\)
+\part \(C = 10^4\)
+\part \(C = 10^6\)
+\end{parts}
+
+\begin{solution}
+e. \(C = 10^6\)
+\end{solution}
+
+\question Which value of \(C\) results in the lowest \(E_{\text{out}}\)?
+\begin{parts}
+\part \(C = 0.01\)
+\part \(C = 1\)
+\part \(C = 100\)
+\part \(C = 10^4\)
+\part \(C = 10^6\)
+\end{parts}
+
+\begin{solution}
+c. \(C = 100\)
+\end{solution}
+\end{questions}
+
+\section*{Code}
+
+\lstinputlisting[
+    language=Python, 
+    title=\texttt{data2d.py}, 
+    basicstyle=\small\ttfamily,
+    showstringspaces=false
+]{code/data2d.py}
+\lstinputlisting[
+    language=Python, 
+    title=\texttt{pset8.py}, 
+    basicstyle=\small\ttfamily,
+    showstringspaces=false
+]{code/pset8.py}
+\lstinputlisting[
+    title=\texttt{Output}, 
+    basicstyle=\small\ttfamily,
+    showstringspaces=false
+]{output/pset8}
+\end{document}
+\section*{Primal versus Dual Problem}
+

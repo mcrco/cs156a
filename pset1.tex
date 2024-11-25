@@ -1,0 +1,330 @@
+\documentclass[answers]{exam}
+\makeindex
+
+\usepackage{amsmath, amsfonts, amssymb, amstext, amscd, amsthm, makeidx, graphicx, hyperref, url, enumerate, mathtools, listings}
+\newtheorem{theorem}{Theorem}
+\allowdisplaybreaks
+
+\begin{document}
+
+\begin{center}
+{\Large CS 156a Learning Systems - Homework 1} \\
+\medskip
+Marco Yang \\
+\medskip
+2237027
+\bigskip
+\end{center}
+
+\section{The Learning Problem}
+
+\begin{questions}
+\question What types of ML, if any, best describe the following three scenarios:
+
+\begin{enumerate}[i]
+\item A coin classification system is created for a vending machine. The 
+developers obtain exact coin specifications from the U.S. Mint and derive
+a statistical model of the size, weight, and denomination, which the vending 
+machine then uses to classify coins.
+\item Instead of calling the U.S. Mint to obtain coin information, an algorithm 
+is presented with a large set of labeled coins. The algorithm uses this data to
+infer decision boundaries which the vending machine then uses to classify its 
+coins.
+\item A computer develops a strategy for playing Tic-Tac-Toe by playing 
+repeatedly and adjusting its strategy by penalizing moves that eventually lead
+to losing.
+\end{enumerate}
+
+\begin{solution}
+{[\textbf{d}]} (i) Not learning, (ii) Supervised Learning, (iii) 
+Reinforcement Learning
+
+The first classification system is fully deterministic based on the inputs and
+did not require any adjustments to the algorithm (no learning). The second 
+algorithm actually makes decisions from data based on given outputs (labels) for
+given inputs (coins). Thus, it is supervised learning. The last algorithm
+is given data with input (Tic-Tac-Toe game environment) but no specific outputs.
+Instead, it is given a set of rules/incentive to learn from. Thus, it is 
+reinforcement learning.
+\end{solution}
+
+\question Which of the following problems are best suited for ML?
+
+\begin{enumerate}[i]
+    \item Classifying numbers into primes and non-primes.
+    \item Detecting potential fraud in credit card charges.
+    \item Determining the time it would take a falling object to hit the ground.
+    \item Determining the optimal cycle for traffic lights in a busy intersection. 
+\end{enumerate}
+
+\begin{solution}
+{[\textbf{a}]} (ii) and (iv).
+
+The first problem has a deterministic algorithm (factoring) and also has an 
+input space that is infinitely large ($\mathbb{Z}$). The second problem 
+could benefit from ML since there are extensive records for credit card 
+charges of legitimate and fraudulent transactions (data for ML to learn
+from). The third problem is projectile motion, which already has very good
+mathematical models (PDEs) that are not hard to solve. The last problem
+could use an ML solution since it is hard to think of a deterministic solution
+and there is probably lots of data for how many cars arrive at an intersection 
+based on time of day, weather, date, etc... and thus there is a lot of data 
+a ML model can learn from.
+\end{solution}
+
+\end{questions}
+
+\section{Bins and Marbles}
+
+\begin{questions}
+\setcounter{question}{2}
+
+\question We have 2 opaque bags, each containing 2 balls. One bag has 2 black 
+balls and the other has a black ball and a white ball. You pick a bag at random 
+and then pick one of the balls in that bag at random. When you look at the ball,
+it is black. You now pick the second ball from that same bag. What is the
+probability that this ball is also black?
+
+\begin{solution}
+Applying Bayes' Theorem, the probability that the ball is from the bag with 2 
+black balls is 
+
+\[
+    \frac{1 \cdot \frac{1}{2}}{\frac{1}{2} \cdot \frac{1}{2} + \frac{1}{2} \cdot 1} = \frac{2}{3}
+.\] 
+{[\textbf{d}]} 2/3
+\end{solution}
+
+\end{questions}
+
+Consider a sample of 10 marbles drawn from a bin containing red and green marbles.
+The probability that any marble we draw is red is $\mu = 0.55$ (independently, with
+replacement). We address the probability of getting no red marbles ($\nu = 0$) 
+in the following cases:
+
+\begin{questions}
+\setcounter{question}{3}
+
+\question We draw only one such sample. Compute the probability that $\nu = 0$.
+The closest answer is 
+
+\begin{solution}
+The probability of not drawing a red marble 10 times in a row is
+
+\[
+    (1 - \mu)^{10} = 0.45^{10} \approx 3.4 \cdot 10^{-4}
+.\] 
+
+{[\textbf{b}]} $3.405 \cdot 10^{-4}$
+\end{solution}
+
+\question We draw 1,000 independent samples. Compute the probability that (at least)
+one of the samples has $\nu = 0$.
+
+\begin{solution}
+The probability that one sample as $\nu = 0$ is the complement of the
+probability that none of the samples have $\nu = 0$.
+
+\[
+p = 1 - \left( 1 - 3.405 \cdot 10^{-4} \right)^{1000} \approx 0.289 
+.\] 
+
+{[\textbf{c}]} 0.289
+\end{solution}
+\end{questions}
+
+\section{Feasibility of Learning}
+
+An unknown boolean function needs to predict the output of 3 inputs:
+101, 100, 111. The scoring function for a hypothesis of the unknown function is
+
+\textbf{Score} =  (\# of target functions agreeing with hypothesis on all 3 
+points)$\times 3$ + (\#of target functions agreeing with hypothesis on exactly 
+2 points)$\times 2$ + (\# of target functions agreeing with hypothesis on 
+exactly 1 point)$\times 1$ + (\# of target functions
+agreeing with hypothesis on 0 points)$\times 0$.
+
+\begin{questions}
+\setcounter{question}{5}
+
+\question Which hypothesis $g$ agrees most with the possible target functions in terms
+of the above scoring method?
+
+\begin{solution}
+There are 8 possible target functions, defined by the 8 possible bit permutations 
+for the 3 inputs given in a specific orderd.
+
+All of the hypothesis functions output a specific permutation of bits for a 
+specific permutation of the possible inputs. Thus, we can count the number of 
+functions that agree on 0, 1, 2, and 3 bits in the same fashion: there will
+always be ${3 \choose 3} = 1$ target function with none of the 3 output bits
+flipped compared to the target function permutation, there will always be
+${3 \choose 1}$ target function with 1 of the 3 output bits flipped 
+compare to the target function permutation, and so on for 2/3 and 3/3 output
+bits flipped compared to the target function permutation. Thus, all hypotheses
+score the same. 
+
+{[\textbf{e}]} They are all equivalent.
+\end{solution}
+\end{questions}
+
+\section{The Perceptron Learning Algorithm}
+
+In this problem, you will create your own target function $f$ and data set 
+$\mathcal{D}$ to see how the Perceptron Learning Algorithm works. Take $d=2$ 
+so you can visualize the problem, and assume $\mathcal{X} = [-1, 1] \times 
+[-1, 1]$ with uniform probability of picking each $x \in \mathcal{X}$.
+
+In each run, choose a random line in the plane as your target function $f$ 
+(do this by taking two random, uniformly distributed points in $[-1, 1] \times
+[-1, 1]$ and taking the line passing through them), where one side of the line 
+maps to +1 and the other maps to -1. Choose the inputs $\textbf{x}_{n}$ of the 
+data set as random points (uniformly in $\mathcal{X}$), and evaluate the target 
+function on each $\textbf{x}_{n}$ to get the corresponding output $y_{n}$. 
+Now, in each run, use the Perceptron Learning Algorithm to find $g$. Start the 
+PLA with the weight vector w being all zeros (consider sign(0) = 0, so all 
+points are initially misclassified), and at each iteration have the algorithm 
+choose a point randomly from the set of misclassified points. We are interested 
+in two quantities: the number of iterations that PLA takes to converge to $g$, 
+and the disagreement between $f$ and $g$ which is $\mathbb{P}[f(\textbf{x}) \neq 
+g(\textbf{x})]$ (the probability that f and g will disagree on their 
+classification of a random point). You can either calculate this probability 
+exactly, or approximate it by generating a sufficiently large, separate set 
+of points to estimate it. In order to get a reliable estimate for these two 
+quantities, you should repeat the experiment for 1000 runs (each run as 
+specified above) and take the average over these runs.
+
+\begin{verbatim}
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+def sign(x):
+    if x < 0:
+        return -1
+    if x > 0:
+        return 1
+    return 0
+
+def rand_point():
+    return np.random.uniform(-1, 1, 2)
+
+class PLA():
+    def __init__(self, dim=2):
+        self.dim = dim
+        self.weights = np.zeros(dim + 1)
+        self.iters = 0
+
+    def predict(self, x):
+        # add a 1 to the front of x for w0
+        x = np.concatenate((np.array([1]), x))
+        return sign(self.weights.T @ x)
+
+    def update(self, x, y):
+        # add a 1 to the front of x for w0
+        x = np.concatenate((np.array([1]), x))
+        self.weights += y * x
+
+    def iter(self, x, y):
+        for xi, yi in zip(x, y):
+            if self.predict(xi) != yi:
+                self.update(xi, yi)
+                self.iters += 1
+                return True
+        return False
+
+    def train(self, x, y):
+        while self.iter(x, y):
+            continue
+        return self.iters
+
+def generate_data(n):
+    # generate target line from 2 random points
+    p1 = rand_point()
+    p2 = rand_point()
+    m = (p2[1] - p1[1]) / (p2[0] - p1[0])
+    b = p1[1] - m * p1[0]
+    f = lambda x:  m * x + b
+
+    x = np.array([rand_point() for _ in range(n)])
+    y = np.array([sign(xi[1] - f(xi[0])) for xi in x])
+
+    return x, y, f
+
+def simulate(n):
+    x, y, f = generate_data(n)
+    pla = PLA()
+    pla.train(x, y)
+    return pla, f
+
+def prob7():
+    iters_arr = []
+    for _ in range(1000):
+        pla, _ = simulate(10)
+        iters_arr.append(pla.iters)
+    print('Average iterations to train PLA on 10 points:', sum(iters_arr) / len(iters_arr))
+
+def prob8():
+    count = 0
+    for _ in range(1000):
+        pla, f = simulate(10)
+        p = rand_point()
+        if pla.predict(p) == sign(p[1] - f(p[0])):
+            count += 1
+    print('PLA accuracy on random point after training on 10 points:', count / 1000)
+
+def prob9():
+    iters_arr = []
+    for _ in range(1000):
+        pla, _ = simulate(100)
+        iters_arr.append(pla.iters)
+    print('Average iterations to train PLA on 100 points:', sum(iters_arr) / len(iters_arr))
+
+def prob10():
+    count = 0
+    for _ in range(1000):
+        pla, f = simulate(100)
+        p = rand_point()
+        if pla.predict(p) == sign(p[1] - f(p[0])):
+            count += 1
+    print('PLA accuracy on random point after training on 100 points:', count / 1000)
+
+if __name__ == '__main__':
+    prob7() # 14.699
+    prob8() # 0.886
+    prob9() # 246.928
+    prob10() # 0.987
+
+\end{verbatim}
+
+\begin{questions}
+\setcounter{question}{6}
+\question Take $N=10$. How many iterations does it take on average for the PLA 
+to converge for $N=10$ training points? Pick the value closest to your results.
+
+\begin{solution}
+{[\textbf{b}]} 15.
+\end{solution}
+
+\question Which of the following is closest to $\mathbb{P}[f(x) \neq  g(x)]$
+for $N = 10$?
+
+\begin{solution}
+{[\textbf{c}]} 0.1.
+\end{solution}
+
+\question Take $N=100$. How many iterations does it take on average for the PLA 
+to converge for $N=100$ training points? Pick the value closest to your results.
+
+\begin{solution}
+{[\textbf{b}]} 100.
+\end{solution}
+
+\question Which of the following is closest to $\mathbb{P}[f(x) \neq  g(x)]$
+for $N = 100$?
+
+\begin{solution}
+{[\textbf{b}]} 0.01.
+\end{solution}
+\end{questions}
+\end{document}

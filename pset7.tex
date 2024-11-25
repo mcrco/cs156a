@@ -1,0 +1,317 @@
+\documentclass[answers]{exam}
+\makeindex
+
+\usepackage{amsmath, amsfonts, amssymb, amstext, amscd, amsthm, makeidx, graphicx, hyperref, url, enumerate}
+\newtheorem{theorem}{Theorem}
+\usepackage{listings}
+\usepackage{lmodern}
+\usepackage{sourcecodepro}
+\usepackage[T1]{fontenc}
+\lstset{basicstyle=\ttfamily}
+\allowdisplaybreaks
+
+\begin{document}
+
+\begin{center}
+{\Large CS 156 - Problem Set 7} \\
+\medskip
+Marco Yang \\
+\medskip
+2237027
+\bigskip
+\end{center}
+
+\section*{\textbf{Validation}}
+
+In the following problems use \verb|in.dta| and \verb|out.dta| from
+Homework \#6. We are going to apply linear regersison with a nonlinear 
+transformtion for classification (without regularization). The nonlinear
+transformation is given by $\phi_0$ through $\phi_7$ which transform
+$(x_1,x_{2}$ into
+
+\[
+1 \quad x_1 \quad x_2 \quad x_1^2 \quad x_2^2 \quad x_1x_2 \quad |x_1 - x_2| \quad |x_1 + x_2|
+.\] 
+
+To illustrate how taking out points for validation affects the performance, we 
+will consider the hypothesis trained on $\mathcal{D}_{\text{train}}$ (without
+restoring the full $\mathcal{D}$ for training after validation is done).
+
+\begin{questions}
+\question Split \verb|in.dta| into training (first 25 examples), and validation
+(last 10 examples). Train on 25 examples only, using the validation set of 10 
+samples to select between 5 models that apply linear regression to $\phi_0$ 
+through $\phi_{k}$, with $k=3,4,5,6,7$. For which model is the classification 
+error on the validation set smallest?
+
+\begin{choices}
+\choice $k=3$
+\choice $k=4$
+\choice $k=5$
+\choice $k=6$
+\choice $k=7$
+\end{choices}
+
+\begin{solution}
+D. $k=6$
+\end{solution}
+
+\question Evaluate the out-of-sample classification error using \verb|out.dta|
+on the 5 models to see how well the validation set predicted the best of the 
+5 models. For which model is the out-of-sample classification error smallest?
+
+\begin{choices}
+\choice $k=3$
+\choice $k=4$
+\choice $k=5$
+\choice $k=6$
+\choice $k=7$
+\end{choices}
+
+\begin{solution}
+E. $k=7$
+\end{solution}
+
+\question Reverse the role of training and validation sets; now training with
+the last 10 examples and validating with the first 25 exaxmples. For which model
+is the classification error on the validation set smallest?
+
+\begin{choices}
+\choice $k=3$
+\choice $k=4$
+\choice $k=5$
+\choice $k=6$
+\choice $k=7$
+\end{choices}
+
+\begin{solution}
+D. $k=6$
+\end{solution}
+
+\question Once again, evaluate the out-of-sample classification error using 
+\verb|out.dta| on the 5 models to see how well the validation set predicted 
+the best of the 5 models. For which model is the out-of-sample classification 
+error smallest?
+
+\begin{choices}
+\choice $k=3$
+\choice $k=4$
+\choice $k=5$
+\choice $k=6$
+\choice $k=7$
+\end{choices}
+
+\begin{solution}
+D. $k=6$
+\end{solution}
+
+\question What values are closest in Euclidean distance to the out-of-sample 
+classification error obtained for the model chosen in Problems 1 and 3, 
+respectively?
+
+\begin{choices}
+\choice $0.0, 0.1$
+\choice $0.1, 0.2$
+\choice $0.1, 0.3$
+\choice $0.2, 0.2$
+\choice $0.2, 0.3$
+\end{choices}
+
+\begin{solution}
+B. $0.1, 0.2$
+\end{solution}
+\end{questions}
+
+\section*{\textbf{Validation Bias}}
+
+\begin{questions}
+\setcounter{question}{5}
+\question Let $e_1$ and $e_2$ be independent random variables, distirbuted 
+uniformly over the interval $[0, 1]$. Let $e=\text{min}(e_1,e_2)$. The 
+expected values of $e_1,e_2,e$ are closest to
+
+\begin{choices}
+\choice 0.5, 0.5, 0 
+\choice 0.5, 0.5, 0.1
+\choice 0.5, 0.5, 0.25
+\choice 0.5, 0.5, 0.4
+\choice 0.5, 0.5, 0.5
+\end{choices}
+
+\begin{solution}
+D. $0.5, 0.5, 0.4$.
+
+$\mathbb{E}[e_1] = \mathbb{E}[e_2] = 0.5$ is obvious since they are uniform
+on $[-1, 1]$. The expected value of $e$ can be calculated as
+
+\[
+    \frac{1}{(1 - 0) \cdot (1 - 0)}\int_{0}^{1} \int_{0}^{1} \text{min}(e_1,e_2) \, de_1 \, de_2 = \int_{0}^{1} \left( \int_{0}^{e_2} e_1 \, de_1 + \int_{e_2}^{1} e_2 \, de_1 \right) \, de_2 = \frac{1}{3}
+.\] 
+\end{solution}
+\end{questions}
+
+\section*{\textbf{Cross-Validation}}
+\begin{questions}
+\setcounter{question}{6}
+\question You are given the data points $(x,y): (-1, 0), (\rho, 1), (1, 0), 
+\rho \ge 0$, and a choice between two models: constant $\{h_0(x) = b\}$ and
+linear $\{h_1(x) = ax+b\}$. For which value of $\rho$ would the two models 
+be tied using leave-one-out cross validation with the squared error measure?
+
+\begin{choices}
+\choice $\sqrt{\sqrt{3} + 4}$
+\choice $\sqrt{\sqrt{3} -1}$ 
+\choice $\sqrt{9 + 4\sqrt{6}}$
+\choice $\sqrt{9 - \sqrt{6}}$ 
+\choice None of the above
+\end{choices}
+
+\begin{solution}
+C. $\sqrt{9 + 4\sqrt{6}}$
+For the constant model, when leaving one point out, the line formed by the
+other two is simply the average of the $y$ values. Thus, our CV error for the
+constant model is
+
+\[
+E_0 = \frac{1}{3}(1^2 + 0.5^2 + 0.5^2)
+\] 
+
+since the distance between $(\rho, 1)$ and $y=0$ is 1 and the distance between 
+either of the other two points and $y=0.5$ is 0.5.
+
+For the linear model, the line formed by $(-1,0)$ and $(1,0)$ is still $y=0$,
+so that error is still $1^2$. When leaving out $(1,0)$, the line formed is
+$y = 1/(\rho + 1) x + 1 /(\rho + 1)$. Thus, our error is $(1 /(\rho + 1) \cdot 1 
++ \rho + 1)^2$. When leaving out $(-1, 0)$, our line is $y = 1 / (\rho - 1)x - 1 
+/ (\rho - 1)$, and our error is $((\rho - 1) \cdot (-1) - (\rho - 1))^2$. Our 
+CV error for the linear model is
+
+\[
+E_1 = \frac{1}{3}(1^2 + (2 / (\rho + 1))^2 + (-2 / (\rho - 1))^2)
+.\] 
+
+Comparing the two errors, we have
+
+\begin{gather*}
+\frac{1}{3}(1^2 + 0.5^2 + 0.5^2) = \frac{1}{3}(1^2 + \left(\frac{2}{\rho + 1}\right)^2 + \left(\frac{-2}{\rho - 1}\right)^2) \\ 
+\frac{1}{2} = 4\left( \frac{1}{(\rho + 1)^2} + \frac{1}{(\rho - 1)^2} \right)  \\ 
+(\rho + 1)^2(\rho - 1)^2 = 8((\rho + 1)^2 + (\rho - 1)^2) \\ 
+\rho^{4} - 18\rho^2 - 15 = 0 \\ 
+\rho = \pm \sqrt{9 + 4\sqrt{6}}
+\end{gather*}
+
+Since we only want non-negative $\rho$, we arrive at our answer C.
+\end{solution}
+\end{questions}
+
+\section*{\textbf{PLA vs. SVM}}
+In the following problems, we compare PLA to SVM with hard margin on linearly
+separable data sets. For each run, you wil create your own target function $f$
+and data set $\mathcal{D}$. Take $d=2$ and choose a random line in the plane
+as your target function $f$ (do this by taking two random, uniformly distributed
+points on $[-1,1] \times [-1, 1]$) and taking the line passing through them, 
+where one side of the line maps to +1 and the other $-1$. Choose the inputs 
+$\textbf{x}_{n}$ of the data set as random points in $\mathcal{X}=[-1,1] \times 
+[-1, 1]$, and evaluate the target function on each $\textbf{x}_{n}$ to get the 
+corresponding output $y_{n}$. If all data points are on one side of the line, 
+discard the run and start a new run. 
+
+Start PLA with the all-zero vector and pick the misclassified point for each PLA
+iteration at random. Run PLA to find the final hypothesis $g_{\text{PLA}}$ and 
+measure the disagreement between $f$ and $g_{\text{PLA}}$ as $\mathbb{P}[
+f(\textbf{x}) \neq  g_{\text{PLA}}(\textbf{x})]$ (you can either calculate this
+exactly, or approximate it by generating a sufficiently large, separate set of 
+points to evaluate it). Now, run SVM on the same data to find the final 
+hypothesis $g_{\text{SVM}}$ by solving
+\[
+\underset{\textbf{w}, b}{\text{min}} \quad \frac{1}{2} \textbf{w}^{T}\textbf{w} \quad \text{s.t. } y_{n}(\textbf{w}^{T}\textbf{x}_{n} + b) \ge 1
+\] 
+using quadratic programming on the primal or the dual problem, or using an SVM
+package. Measure the disagreement between $f$ and $g_{\text{SVM}}$ as 
+$\mathbb{P}[f(\textbf{x}) \neq g_{\text{SVM}}(\textbf{x})]$, and count the 
+number of support vectors you get in each run.
+
+\begin{questions}
+\setcounter{question}{7}
+\question For $N=10$, repeat the above experiment for 1000 runs. How often is
+$g_{\text{SVM}}$ better than $g_{\text{PLA}}$ in approximating $f$? The 
+percentage of time is closest to:
+
+\begin{choices}
+\choice 20\% 
+\choice 40\% 
+\choice 60\% 
+\choice 80\% 
+\choice 100\% 
+\end{choices}
+
+\begin{solution}
+C. 60\% 
+\end{solution}
+
+\question For $N=100$, repeat the above experiment for 1000 runs. How often is
+$g_{\text{SVM}}$ better than $g_{\text{PLA}}$ in approximating $f$? The 
+percentage of time is closest to:
+
+\begin{choices}
+\choice 5\% 
+\choice 25\% 
+\choice 45\% 
+\choice 65\% 
+\choice 85\% 
+\end{choices}
+
+\begin{solution}
+D. 65\%
+\end{solution}
+
+\question For $N=100$, which of the following is the closest to the averarge
+number of support vectors of $g_{\text{SVM}}$ (averaged over 1000 runs)?:
+
+\begin{choices}
+\choice 2
+\choice 3
+\choice 5
+\choice 10
+\choice 20
+\end{choices}
+
+\begin{solution}
+B. 3
+\end{solution}
+\end{questions}
+
+\section*{Code}
+
+\lstinputlisting[
+    language=Python, 
+    title=\texttt{data2d.py}, 
+    basicstyle=\small\ttfamily,
+    showstringspaces=false
+]{code/data2d.py}
+\lstinputlisting[
+    language=Python, 
+    title=\texttt{linreg.py}, 
+    basicstyle=\small\ttfamily,
+    showstringspaces=false
+]{code/linregtrans.py}
+\lstinputlisting[
+    language=Python, 
+    title=\texttt{linreg.py}, 
+    basicstyle=\small\ttfamily,
+    showstringspaces=false
+]{code/pla.py}
+\lstinputlisting[
+    language=Python, 
+    title=\texttt{linreg.py}, 
+    basicstyle=\small\ttfamily,
+    showstringspaces=false
+]{code/svm.py}
+\lstinputlisting[
+    language=Python, 
+    title=\texttt{pset6.py}, 
+    basicstyle=\small\ttfamily,
+    showstringspaces=false
+]{code/pset7.py}
+
+\end{document}

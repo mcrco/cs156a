@@ -1,0 +1,277 @@
+\documentclass[answers]{exam}
+\makeindex
+
+\usepackage{amsmath, amsfonts, amssymb, amstext, amscd, amsthm, makeidx, graphicx, hyperref, url, enumerate}
+\newtheorem{theorem}{Theorem}
+\allowdisplaybreaks
+
+\begin{document}
+
+\begin{center}
+{\Large CS 156a - Problem Set 3} \\
+\medskip
+Marco Yang \\
+\medskip
+2237027
+\bigskip
+\end{center}
+
+\begin{questions}
+
+\section*{Generalization Error}
+
+\question
+The modified Hoeffding Inequality provides a way to characterize the 
+generalization error with a probabilistic bound:
+
+\[
+\mathbb{P}\left[ |E_{in}(g) - E_{out}(g)| > \epsilon \right] \leq 2M 
+e^{-2\epsilon^2 N}
+\]
+
+for any $\epsilon > 0$. If we set $\epsilon = 0.05$ and want the 
+probability bound $2M e^{-2\epsilon^2 N}$ to be at most 0.03, what is 
+the least number of examples $N$ (among the given choices) needed for 
+the case $M = 1$?
+
+\begin{choices}
+    \choice 500
+    \choice 1000
+    \choice 1500
+    \choice 2000
+    \choice More examples are needed
+\end{choices}
+
+\begin{solution}
+B. 1000
+
+\[
+2(1)e^{-2(0.05)^2N} \le 0.03 \implies N \ge 839.94
+.\]  
+\end{solution}
+
+\question
+Repeat for the case $M = 10$.
+
+\begin{choices}
+    \choice 500
+    \choice 1000
+    \choice 1500
+    \choice 2000
+    \choice More examples are needed
+\end{choices}
+
+\begin{solution}
+C. 1500
+
+\[
+2(100)e^{-2(0.05)^2N} \le 0.03 \implies N \ge 1300.46
+.\] 
+\end{solution}
+
+\question
+Repeat for the case $M = 100$.
+
+\begin{choices}
+    \choice 500
+    \choice 1000
+    \choice 1500
+    \choice 2000
+    \choice More examples are needed
+\end{choices}
+
+\begin{solution}
+D. 2000
+
+\[
+2(100)e^{-2(0.05)^2N} \le 0.03 \implies N \ge 1760.98
+.\] 
+\end{solution}
+
+\section*{Break Point}
+
+\question
+As shown in class, the (smallest) break point for the Perceptron Model 
+in the two-dimensional case ($\mathbb{R}^2$) is 4 points. What is the 
+smallest break point for the Perceptron Model in $\mathbb{R}^3$? (i.e., 
+instead of the hypothesis set consisting of separating lines, it 
+consists of separating planes.)
+
+\begin{choices}
+    \choice 4
+    \choice 5
+    \choice 6
+    \choice 7
+    \choice 8
+\end{choices}
+
+\begin{solution}
+A. 5.
+
+Consider a plane of points with one label and two points on each side
+of the plane with the other label. It is impossible to draw a plane
+that shatters these 5 points properly.
+\end{solution}
+
+\section*{Growth Function}
+
+\question
+Which of the following are possible formulas for a growth function 
+$m_\mathcal{H}(N)$:
+
+\begin{itemize}
+    \item[i)] $1 + N$
+    \item[ii)] $1 + N + \binom{N}{2}$
+    \item[iii)] $\sum_{i=1}^{\lfloor \sqrt{N} \rfloor} \binom{N}{i}$
+    \item[iv)] $2^{\lfloor N/2 \rfloor}$
+    \item[v)] $2^N$
+\end{itemize}
+
+\begin{choices}
+    \choice i, v
+    \choice i, ii, v
+    \choice i, iv, v
+    \choice i, ii, iii, v
+    \choice i, ii, iii, iv, v
+\end{choices}
+
+\begin{solution}
+E. i, ii, iii, iv, v
+
+We can simply have our hypothesis be to predict from a set of $x \le 2r^{N}$ number 
+of dichotomies.
+\end{solution}
+
+\section*{Fun with Intervals}
+
+\question
+Consider the “2-intervals” learning model, where $h: \mathbb{R} \to 
+\{-1,+1\}$ and $h(x) = +1$ if the point is within either of two 
+arbitrarily chosen intervals and $-1$ otherwise. What is the (smallest) 
+break point for this hypothesis set?
+
+\begin{choices}
+    \choice 3
+    \choice 4
+    \choice 5
+    \choice 6
+    \choice 7
+\end{choices}
+
+\begin{solution}
+C. 5.
+
+For 4 or less points, you can assign one interval to each point, no matter
+their label. However, with 5 points, you can assign alternating colors
+such that the two intervals cannot contain 3 points in 3 different intervals.
+\end{solution}
+
+\question
+Which of the following is the growth function $m_H(N)$ for the 
+“2-intervals” hypothesis set?
+
+\begin{choices}
+    \choice $\binom{N+1}{4}$
+    \choice $\binom{N+1}{2} + 1$
+    \choice $\binom{N+1}{4} + \binom{N+1}{2} + 1$
+    \choice $\binom{N+1}{4} + \binom{N+1}{3} + \binom{N+1}{2} + 
+    \binom{N+1}{1} + 1$
+    \choice None of the above
+\end{choices}
+
+\begin{solution}
+C. $\binom{N}{4} + \binom{N}{2} + 1$.
+
+The intervals could either be unique, overlap to form 1 interval,
+or cover no points. Thus, there are $\binom{N}{4}$ ways to create
+2 unique intervals, $\binom{N}{2}$ ways to create one unique interval,
+and $1$ way to cover no points (no intervals).
+your interval
+\end{solution}
+
+\question
+Now, consider the general case: the “$M$-intervals” learning model. 
+Again $h : \mathbb{R} \to \{-1,+1\}$, where $h(x) = +1$ if the point 
+falls inside any of $M$ arbitrarily chosen intervals, otherwise $h(x) = 
+-1$. What is the (smallest) break point of this hypothesis set?
+
+\begin{choices}
+    \choice $M$
+    \choice $M + 1$
+    \choice $M^2$
+    \choice $2M + 1$
+    \choice $2M - 1$
+\end{choices}
+
+\begin{solution}
+D. $2M + 1$.
+
+With $M$ intervals, you can always cover $2M$ points because the worst case
+scenario is alternating labels for consecutive points, for which you need
+exactly $M$ intervals. However, if you have $2M + 1$ points and alternate 
+labels for each point starting with $h(x_1) = +1$, you can no longer assign
+enough intervals to cover each of the $M+1$ points with label +1.
+
+\end{solution}
+
+\section*{Convex Sets: The Triangle}
+
+\question
+Consider the “triangle” learning model, where $h : \mathbb{R}^2 \to 
+\{-1,+1\}$ and $h(x) = +1$ if $x$ lies within an arbitrarily chosen 
+triangle in the plane and $-1$ otherwise. Which is the largest number 
+of points in $\mathbb{R}^2$ (among the given choices) that can be 
+shattered by this hypothesis set?
+
+\begin{choices}
+    \choice 1
+    \choice 3
+    \choice 5
+    \choice 7
+    \choice 9
+\end{choices}
+
+\begin{solution}
+B. 3
+
+With 3 points, you could create a small triangle for zero points,
+a small triangle around single point for a single point, an infinitely thin 
+triangle for two points, and a big triangle for three points.
+
+For more than 3 points, you can create 3 points with label 1 and place a point 
+with label -1 inside the triangle formed by these 3 points. This is impossible 
+to shatter.
+\end{solution}
+
+\section*{Non-Convex Sets: Concentric Circles}
+
+\question
+Compute the growth function $m_H(N)$ for the learning model made up of 
+two concentric circles around the origin in $\mathbb{R}^2$. 
+Specifically, $H$ contains the functions which are +1 for
+\[
+a^2 \leq x_1^2 + x_2^2 \leq b^2
+\]
+and $-1$ otherwise, where $a$ and $b$ are the model parameters. The 
+growth function is:
+
+\begin{choices}
+    \choice $N + 1$
+    \choice $\binom{N+1}{2} + 1$
+    \choice $\binom{N+1}{3} + 1$
+    \choice $2N^2 + 1$
+    \choice None of the above
+\end{choices}
+
+\begin{solution}
+B. $\binom{N+1}{2} + 1$
+
+We can $N+1$ choices for how many points to include each circle radii, from
+0 points to $N$ points. There are $\binom{N+1}{2}$ ways to do so. However,
+did not consider the cases in which we either choose both radii to contain 0
+points or both radii to contain all points, which are the same dichotomory and
+thus the $+1$ and not $+2$.
+\end{solution}
+
+\end{questions}
+\end{document}
